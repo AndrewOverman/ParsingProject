@@ -8,7 +8,7 @@
 
 %error-verbose
 
-%start picture
+%start zoomjoystrong 
 
 %union { int i; char* str; }
 
@@ -24,12 +24,6 @@
 %token ERROR
 
 %type<i> INT
-%type<str> END
-%type<str> END_STATEMENT
-%type<str> POINT
-%type<str> CIRCLE
-%type<str> RECTANGLE
-%type<str> ERROR
 %type<float> FLOAT
 
 %%
