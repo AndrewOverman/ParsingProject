@@ -7,8 +7,10 @@
 
 
 %error-verbose
+
 %start picture
-%union {int i; char* str;}
+
+%union { int i; char* str; }
 
 %token END
 %token END_STATEMENT
@@ -22,29 +24,28 @@
 %token ERROR
 
 %type<i> INT
-/* %type <str> STATEMENT 		/* any string with END */ 
-/* %type <str> FULL_STATEMENT 	/* STATEMENT followed by ';' */
-/* %type <str> LINE 		/* LINE x y u v  */
-/* %type <str> POINT		/* POINT x y */
-/* %type <str> CIRCLE		/* CIRCLE x y r */
-/* %type <str> RECTANGLE		/* RECTANGLE x y w h */
-/* %type <i> SET_COLOR		/* SET_COLOR r g b */
-/* %type <float> */
-/* %type <str> ERROR		/* any string that isn't above */
+%type<str> END
+%type<str> END_STATEMENT
+%type<str> POINT
+%type<str> CIRCLE
+%type<str> RECTANGLE
+%type<str> ERROR
+%type<float> FLOAT
 
 %%
 picture: 	command
 	|	command picture
+		
 ;
 
-command:	point END_STATEMENT
-	|	line END_STATEMENT
-	|	circle END_STATEMENT
-	|	rectangle END_STATEMENT
-	|	set_color END_STATEMENT
+command:	point 
+	|	line 
+	|	circle 
+	|	rectangle 
+	|	set_color 
 ;
 
-point:		POINT INT INT
+point:		POINT INT INT END_STATEMENT
 		{ if (($2) < 0 || ($3) < 0) 
 		{ printf("coordinates must be positive"); } 
 		else if (($2) > WIDTH || ($3) > HEIGHT) 
@@ -52,14 +53,17 @@ point:		POINT INT INT
 		}
 ;
 
-line:		LINE INT INT INT INT
+line:		LINE INT INT INT INT END_STATEMENT
+		{ printf("line"); }
 		{ if ($2 < 0 || $3 < 0 || $4 < 0 || $5 < 0) 
 		{ printf("coordinates must be positive"); } 
 		else if ($2 > WIDTH || $3 > HEIGHT || $4 > WIDTH || $5 > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
-circle:		CIRCLE INT INT INT
+
+circle:		CIRCLE INT INT INT END_STATEMENT
+		{ printf("circle"); }
 		{ if ($2 < 0 || $3 < 0 || $4 < 0) 
 		{ printf("coordinates must be positive"); } 
 		else if ($2 > WIDTH || $3 > HEIGHT) 
@@ -67,15 +71,16 @@ circle:		CIRCLE INT INT INT
 		}
 ;
 
-rectangle:	RECTANGLE INT INT INT INT 
+rectangle:	RECTANGLE INT INT INT INT END_STATEMENT
 		{ if ($2 < 0 || $3 < 0 || $4 < 0 || $5 < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > WIDTH || $3 > HEIGHT || ($4 + $2) > WIDTH || ($5 + $3) > HEIGHT) 
+		else if ($2 > WIDTH || $3 > HEIGHT || ($4) > WIDTH || ($5) > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
 
-set_color:	SET_COLOR INT INT INT
+set_color:	SET_COLOR INT INT INT END_STATEMENT
+		{ printf("set_color"); }
 		{ if ($2 < 0 || $3 < 0 || $4 < 0) 
 		{ printf("coordinates must be positive"); } 
 		else if ($2 > 255 || $3 > 255 || $4 > 255 )
