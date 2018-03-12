@@ -1,12 +1,13 @@
 %{ 
 	#include <stdio.h>
+	#include "zoomjoystrong.h"
 	int yylex();
 	void yyerror(const char* msg);
 %}
 
 
 %error-verbose
-%start statement
+%start picture
 %union {int i; char* str;}
 
 %token END
@@ -20,6 +21,7 @@
 %token FLOAT
 %token ERROR
 
+%type<i> INT
 /* %type <str> STATEMENT 		/* any string with END */ 
 /* %type <str> FULL_STATEMENT 	/* STATEMENT followed by ';' */
 /* %type <str> LINE 		/* LINE x y u v  */
@@ -43,40 +45,40 @@ command:	point END_STATEMENT
 ;
 
 point:		POINT INT INT
-		{ if ($2 < 0 || $3 < 0) 
+		{ if (($2) < 0 || ($3) < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > screen || $3 > screen) 
+		else if (($2) > WIDTH || ($3) > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
 
 line:		LINE INT INT INT INT
-		{ if ($2 < 0 || $3 < 0 $4 < 0 || $5 < 0) 
+		{ if ($2 < 0 || $3 < 0 || $4 < 0 || $5 < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > screen || $3 > screen $4 > screen || $5 > screen) 
+		else if ($2 > WIDTH || $3 > HEIGHT || $4 > WIDTH || $5 > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
 circle:		CIRCLE INT INT INT
-		{ if ($2 < 0 || $3 < 0 $4 < 0) 
+		{ if ($2 < 0 || $3 < 0 || $4 < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > screen || $3 > screen $4 > screen) 
+		else if ($2 > WIDTH || $3 > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
 
 rectangle:	RECTANGLE INT INT INT INT 
-		{ if ($2 < 0 || $3 < 0 $4 < 0 || $5 < 0) 
+		{ if ($2 < 0 || $3 < 0 || $4 < 0 || $5 < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > screen || $3 > screen $4 > screen || $5 > screen) 
+		else if ($2 > WIDTH || $3 > HEIGHT || ($4 + $2) > WIDTH || ($5 + $3) > HEIGHT) 
 		{ printf("coordinates must fit on the screen"); }
 		}
 ;
 
 set_color:	SET_COLOR INT INT INT
-		{ if ($2 < 0 || $3 < 0 $4 < 0) 
+		{ if ($2 < 0 || $3 < 0 || $4 < 0) 
 		{ printf("coordinates must be positive"); } 
-		else if ($2 > 255 || $3 > 255 $4 > 255 )
+		else if ($2 > 255 || $3 > 255 || $4 > 255 )
 		{ printf("rgb values must be 255 or less"); }
 		}
 ;
