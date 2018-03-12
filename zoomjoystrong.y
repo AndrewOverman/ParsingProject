@@ -33,8 +33,12 @@
 %type<float> FLOAT
 
 %%
+
+zoomjoystrong:	picture end
+;
+
 picture: 	command
-	|	command picture
+	|	command picture 
 		
 ;
 
@@ -88,9 +92,13 @@ set_color:	SET_COLOR INT INT INT END_STATEMENT
 		}
 ;
 
+end:		END END_STATEMENT
+;
+
 %%
 
 int main(int argc, char** argv) {
+	setup();
 	yyparse();
 	return 0;
 }
